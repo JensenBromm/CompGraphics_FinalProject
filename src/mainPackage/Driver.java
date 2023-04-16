@@ -11,7 +11,7 @@ public class Driver extends Applet {
 		addKeyListener(camera);
 
 		//Initialize textures
-		
+
 		//construct screen
 		screen = new Screen(map, mapWidth, mapHeight, textures, 640, 480);
 	}

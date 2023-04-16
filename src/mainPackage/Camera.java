@@ -6,8 +6,8 @@ import java.awt.Component;
 
 public class Camera implements KeyListener {
     //Camera movement speeds
-    public final double MOVE_SPEED = 1;
-    public final double ROTATION_SPEED = 0.05;
+    public final double MOVE_SPEED = 0.15;
+    public final double ROTATION_SPEED = 0.08;
 
     //Location of player on 2D map as well as x and y components for vector of player
     public double xPos,yPos,xDir, yDir, xPlane, yPlane;
