@@ -2,12 +2,11 @@ package mainPackage;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.Component;
 
 public class Camera implements KeyListener {
     //Camera movement speeds
-    public final double MOVE_SPEED = 0.15;
-    public final double ROTATION_SPEED = 0.08;
+    public final double MOVE_SPEED = 0.05;
+    public final double ROTATION_SPEED = 0.05;
 
     //Location of player on 2D map as well as x and y components for vector of player
     public double xPos,yPos,xDir, yDir, xPlane, yPlane;
@@ -31,25 +30,25 @@ public class Camera implements KeyListener {
 
     //While key is pressed set boolean to true
     public void keyPressed (KeyEvent key) {
-        if ((key.getKeyCode() == KeyEvent.VK_LEFT))
+        if ((key.getKeyCode() == KeyEvent.VK_LEFT || key.getKeyCode()==KeyEvent.VK_A))
             left = true;
-        if ((key.getKeyCode() == KeyEvent.VK_RIGHT))
+        if ((key.getKeyCode() == KeyEvent.VK_RIGHT || key.getKeyCode()==KeyEvent.VK_D))
             right = true;
-        if ((key.getKeyCode() == KeyEvent.VK_UP))
+        if ((key.getKeyCode() == KeyEvent.VK_UP || key.getKeyCode()==KeyEvent.VK_W))
             forward = true;
-        if ((key.getKeyCode() == KeyEvent.VK_DOWN))
+        if ((key.getKeyCode() == KeyEvent.VK_DOWN || key.getKeyCode()==KeyEvent.VK_S))
             back = true;
     }
 
     //When key is released set boolean to false
     public void keyReleased (KeyEvent key) {
-        if ((key.getKeyCode() == KeyEvent.VK_LEFT))
+    	if ((key.getKeyCode() == KeyEvent.VK_LEFT || key.getKeyCode()==KeyEvent.VK_A))
             left = false;
-        if ((key.getKeyCode() == KeyEvent.VK_RIGHT))
+    	if ((key.getKeyCode() == KeyEvent.VK_RIGHT || key.getKeyCode()==KeyEvent.VK_D))
             right = false;
-        if ((key.getKeyCode() == KeyEvent.VK_UP))
+    	if ((key.getKeyCode() == KeyEvent.VK_UP || key.getKeyCode()==KeyEvent.VK_W))
             forward = false;
-        if ((key.getKeyCode() == KeyEvent.VK_DOWN))
+    	if ((key.getKeyCode() == KeyEvent.VK_DOWN || key.getKeyCode()==KeyEvent.VK_S))
             back = false;
     }
 

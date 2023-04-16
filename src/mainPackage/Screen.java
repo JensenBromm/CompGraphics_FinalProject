@@ -9,7 +9,7 @@ public class Screen {
     public int mapWidth, mapHeight, width, height;
     public ArrayList<Texture> textures;
 
-    public Screen(int[][] m, int mapW, int mapH, ArrayList tex, int w, int h) {
+    public Screen(int[][] m, int mapW, int mapH, ArrayList<Texture> tex, int w, int h) {
         map = m;
         mapWidth = mapW;
         mapHeight = mapH;
@@ -122,18 +122,18 @@ public class Screen {
             wallX -= Math.floor(wallX);
 
             //x coordinate on the texture
-            int texX = (int)(wallX * (textures.get(texNum).SIZE));
+            int texX = (int)(wallX * (textures.get(texNum).size));
             if ((side == 0 && rayDirX > 0) || (side == 1 && rayDirY < 0))
-                texX = textures.get(texNum).SIZE - texX - 1;
+                texX = textures.get(texNum).size - texX - 1;
 
             for (int y = drawStart; y < drawEnd; y++) {
                 int texY = (((y*2 - height + lineHeight) << 6) / lineHeight) /2;
                 int color;
 
                 if (side == 0)
-                    color = textures.get(texNum).pixels[texX + (texY * textures.get(texNum).SIZE)];
+                    color = textures.get(texNum).pixels[texX + (texY * textures.get(texNum).size)];
                 else
-                    color = (textures.get(texNum).pixels[texX + (texY * textures.get(texNum).SIZE)] >> 1) & 8355711;
+                    color = (textures.get(texNum).pixels[texX + (texY * textures.get(texNum).size)] >> 1) & 8355711;
 
                 pixels[x + y*(width)] = color;
             }
