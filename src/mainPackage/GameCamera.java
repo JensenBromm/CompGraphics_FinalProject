@@ -3,7 +3,7 @@ package mainPackage;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Camera implements KeyListener {
+public class GameCamera implements KeyListener {
     //Camera movement speeds
     public final double MOVE_SPEED = 0.05;
     public final double ROTATION_SPEED = 0.05;
@@ -14,7 +14,7 @@ public class Camera implements KeyListener {
     public boolean left, right, forward, back;
 
     //Constructor that tells where camera is
-    public Camera (double x, double y, double xd, double yd, double xp, double yp) {
+    public GameCamera (double x, double y, double xd, double yd, double xp, double yp) {
         xPos = x;
         yPos = y;
         xDir = xd;
@@ -23,10 +23,8 @@ public class Camera implements KeyListener {
         yPlane = yp;
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
+    @Override //Method needed for key listener. We wont be using it
+    public void keyTyped(KeyEvent e) {}
 
     //While key is pressed set boolean to true
     public void keyPressed (KeyEvent key) {

@@ -3,13 +3,13 @@ package mainPackage;
 import java.util.ArrayList;
 import java.awt.Color;
 
-public class Screen {
+public class GameScene {
     public int[][] map;
 
     public int mapWidth, mapHeight, width, height;
-    public ArrayList<Texture> textures;
+    public ArrayList<GameTexture> textures;
 
-    public Screen(int[][] m, int mapW, int mapH, ArrayList<Texture> tex, int w, int h) {
+    public GameScene(int[][] m, int mapW, int mapH, ArrayList<GameTexture> tex, int w, int h) {
         map = m;
         mapWidth = mapW;
         mapHeight = mapH;
@@ -18,7 +18,7 @@ public class Screen {
         height = h;
     }
 
-    public int[] update (Camera camera, int[] pixels) {
+    public int[] update (GameCamera camera, int[] pixels) {
         //First reset the pixels to just a floor and a roof
         //Create a floor
         for (int i = 0; i < pixels.length/2; i++) {
@@ -131,9 +131,9 @@ public class Screen {
                 int color;
 
                 if (side == 0)
-                    color = textures.get(texNum).pixels[texX + (texY * textures.get(texNum).size)];
+                    color = textures.get(texNum).pixels[texX + (texY * textures.get(texNum).size)]& 8355700; //Numbers at the end change the colors to a tad darker
                 else
-                    color = (textures.get(texNum).pixels[texX + (texY * textures.get(texNum).size)] >> 1) & 8355711;
+                    color = (textures.get(texNum).pixels[texX + (texY * textures.get(texNum).size)] >> 1) & 8355700;
 
                 pixels[x + y*(width)] = color;
             }

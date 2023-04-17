@@ -4,20 +4,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 
-public class Texture {
+public class GameTexture {
 	public String fileLoc;
 	public int[] pixels;
 	public int size;
 	
 	//Create the texture objects for each wall texture
-	public static Texture cement1=new Texture("res/CEMENT1.png",64);
-	public static Texture cement2=new Texture("res/CEMENT2.png",64);
-	public static Texture cement3=new Texture("res/CEMENT3.png",64);
-	public static Texture cement4=new Texture("res/CEMENT4.png",64);
-	public static Texture finish=new Texture("res/finish.png",64);
+	public static GameTexture cement1=new GameTexture("res/CEMENT1.png",64);
+	public static GameTexture cement2=new GameTexture("res/CEMENT2.png",64);
+	public static GameTexture cement3=new GameTexture("res/CEMENT3.png",64);
+	public static GameTexture cement4=new GameTexture("res/CEMENT4.png",64);
+	public static GameTexture enemy=new GameTexture("res/enemy.png",64);
 	
 	//create constructor for textures
-	public Texture(String location,int size){	
+	public GameTexture(String location,int size){	
 		fileLoc=location;
 		this.size=size;
 		/*
