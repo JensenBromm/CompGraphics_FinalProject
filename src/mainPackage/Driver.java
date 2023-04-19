@@ -11,22 +11,41 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
-import javax.xml.crypto.dsig.Transform;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
+import java.util.Enumeration;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 
 public class Driver extends Applet {
+	
+	public SimpleUniverse su;
+	public PositionInterpolator transform;
+	public BranchGroup pipes = createPipe();
+	public Shape3D pipe1;
+	public Shape3D pipe2;
+	public Transform3D tr;
+	public Transform3D tr2;
+	public TransformGroup tg;
+	public TransformGroup tg2;
+	
 	public void init() {
 		GraphicsConfiguration gc = SimpleUniverse.getPreferredConfiguration();
 
 		Canvas3D cv = new Canvas3D(gc);
 		setLayout(new BorderLayout());
 		add(cv, BorderLayout.CENTER);
+		su = new SimpleUniverse(cv);
+		su.getViewingPlatform().setNominalViewingTransform();
+		
+		
 
-		BranchGroup pipes = createPipe();
+		
 		BranchGroup back = null;
 		try {
 			back = createBackground();
@@ -36,45 +55,68 @@ public class Driver extends Applet {
 		BranchGroup player = createPlayer();
 		pipes.compile();
 		player.compile();
+		
 
-		SimpleUniverse su = new SimpleUniverse(cv);
-		su.getViewingPlatform().setNominalViewingTransform();
+	
 		su.addBranchGraph(pipes);
 		su.addBranchGraph(back);
 		su.addBranchGraph(player);
 	}
 
-	private BranchGroup createPipe() {
+	public BranchGroup createPipe() {
 		BranchGroup pipes=new BranchGroup();
 
-		TransformGroup spin = new TransformGroup();
-		spin.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		pipes.addChild(spin);
+		TransformGroup move = new TransformGroup();
+		move.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+		pipes.addChild(move);
 		// object
 		int gap=3;
 		int y=(int) Math.floor(Math.random() * 10 - 5);
 
-		Shape3D pipe1=new Pipe(y);
-		Shape3D pipe2=new Pipe(-y+gap);
-		Transform3D tr = new Transform3D();
+		pipe1=new Pipe(y);
+		pipe2=new Pipe(-y+gap);
+		tr = new Transform3D();
 		tr.setScale(0.1);
-		TransformGroup tg = new TransformGroup(tr);
-		spin.addChild(tg);
+		tg = new TransformGroup(tr);
+		move.addChild(tg);
 		tg.addChild(pipe1);
 
 		//Flip pipe on X axis
-		Transform3D tr2 = new Transform3D();
+		tr2 = new Transform3D();
 		tr2.setScale(new Vector3d(0.1,-0.1,0.1));
-		TransformGroup tg2=new TransformGroup(tr2);
-		spin.addChild(tg2);
+		tg2=new TransformGroup(tr2);
+		move.addChild(tg2);
 		tg2.addChild(pipe2);
+	
+		// move the pipes
+		Alpha alpha = new Alpha(-1, 2800);
+		//Create an executioner to constantly change y position of pipes
+		Runnable changeY = new Runnable() {
+		    public void run() {
+		    	System.out.print("help");
+		    	double rand=Math.floor(Math.random() * 10 - 5);
+			    Vector3d translation=new Vector3d();
+			    tr.get(translation);
+			    tr.setTranslation(new Vector3d(translation.x,rand,translation.z));
+			   // tg.setTransform(tr);
+			    
+			    Vector3d translation2=new Vector3d();
+			    tr2.get(translation2);
+			    tr2.setTranslation(new Vector3d(translation2.x,-rand+gap,translation2.z));
+		    	//tg2.setTransform(tr2);
+		    }
+		};
 
-		// rotator
-		Alpha alpha = new Alpha(-1, 24000);
-		RotationInterpolator rotator = new RotationInterpolator(alpha, spin);
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		executor.scheduleAtFixedRate(changeY, 0, 3, TimeUnit.SECONDS);
+		
+		transform = new PositionInterpolator(alpha, move);
+		transform.setStartPosition(1f);
+		transform.setEndPosition(-3f);
 		BoundingSphere bounds = new BoundingSphere();
-		rotator.setSchedulingBounds(bounds);
-		spin.addChild(rotator);
+		transform.setSchedulingBounds(bounds);
+		
+		move.addChild(transform);
 		AmbientLight light = new AmbientLight(true, new Color3f(Color.gray));
 		light.setInfluencingBounds(bounds);
 		pipes.addChild(light);
