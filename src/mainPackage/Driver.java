@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 public class Driver extends Applet {
 	public void init() {
@@ -38,7 +39,16 @@ public class Driver extends Applet {
 	}
 
 	private BranchGroup createPipe() {
-		return null;
+		BranchGroup pipes=new BranchGroup();
+		
+		int y1=new Random().nextInt(5);
+		int y2=new Random().nextInt(-5);
+		Shape3D pipe1=new Pipe(y1);
+		Shape3D pipe2=new Pipe(y2);
+		
+		pipes.addChild(pipe1);
+		pipes.addChild(pipe2);
+		return pipes;
 	}
 
 	private BranchGroup createBackground() throws IOException {
