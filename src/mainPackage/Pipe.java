@@ -1,5 +1,8 @@
 package mainPackage;
 
+import javax.media.j3d.Appearance;
+import javax.media.j3d.Material;
+import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
 import javax.vecmath.Point3d;
 
@@ -31,22 +34,22 @@ public class Pipe extends Shape3D{
 					new Point3d(1.847,y, -0.765), //Point 15
 					
 					//Create Top of outer rim
-					new Point3d(2,y+0.5,0),//Point 16
-					new Point3d(1.847,y+0.5,0.765),//Point 17
-					new Point3d(1.414,y+0.5,1.414), //Point 18
-					new Point3d(0.765,y+0.5,1.847), //Point 19
-					new Point3d(0,y+0.5,2), //Point 20
-					new Point3d(-0.765,y+0.5,1.847), //Point 21
-					new Point3d(-1.414,y+0.5, 1.414), //Point 22
-					new Point3d (-1.847,y+0.5, 0.765), //Point 23
-					new Point3d(-2,y+0.5, 0), //Point 24
-					new Point3d(-1.847,y+0.5, -0.765), //Point 25
-					new Point3d(-1.414,y+0.5, -1.414), //Point 26
-					new Point3d (-0.765,y+0.5, -1.847), //Point 27
-					new Point3d(0,y+0.5, -2), //Point 28
-					new Point3d(0.765,y+0.5, -1.847), //Point 29
-					new Point3d(1.414,y+0.5, -1.414), //Point 30
-					new Point3d(1.847,y+0.5, -0.765), //Point 31
+					new Point3d(2,y+1,0),//Point 16
+					new Point3d(1.847,y+1,0.765),//Point 17
+					new Point3d(1.414,y+1,1.414), //Point 18
+					new Point3d(0.765,y+1,1.847), //Point 19
+					new Point3d(0,y+1,2), //Point 20
+					new Point3d(-0.765,y+1,1.847), //Point 21
+					new Point3d(-1.414,y+1, 1.414), //Point 22
+					new Point3d (-1.847,y+1, 0.765), //Point 23
+					new Point3d(-2,y+1, 0), //Point 24
+					new Point3d(-1.847,y+1, -0.765), //Point 25
+					new Point3d(-1.414,y+1, -1.414), //Point 26
+					new Point3d (-0.765,y+1, -1.847), //Point 27
+					new Point3d(0,y+1, -2), //Point 28
+					new Point3d(0.765,y+1, -1.847), //Point 29
+					new Point3d(1.414,y+1, -1.414), //Point 30
+					new Point3d(1.847,y+1, -0.765), //Point 31
 					
 					
 				//Create inner Circle Front Face
@@ -143,5 +146,16 @@ public class Pipe extends Shape3D{
 	    gi.indexify();   
 
         this.setGeometry(gi.getIndexedGeometryArray());
+        
+        Appearance a=new Appearance();
+        PolygonAttributes pa = new PolygonAttributes();
+        pa.setBackFaceNormalFlip(true);
+        pa.setCullFace(PolygonAttributes.CULL_NONE);
+        a.setPolygonAttributes(pa);
+        
+        Material m=new Material();
+        m.setDiffuseColor(0f, 1f, 0f);
+        a.setMaterial(m);
+        this.setAppearance(a);
 	}
 }
