@@ -7,32 +7,21 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.applet.Applet;
 import javax.imageio.ImageIO;
 import javax.media.j3d.*;
+import javax.swing.Timer;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 
 public class Driver extends Applet {
 	
 	public SimpleUniverse su;
-	public PositionInterpolator transform;
-	public BranchGroup pipes = createPipe();
-	public Shape3D pipe1;
-	public Shape3D pipe2;
-	public Transform3D tr;
-	public Transform3D tr2;
-	public TransformGroup tg;
-	public TransformGroup tg2;
+	public BranchGroup pipes;
 	
 	public void init() {
 		GraphicsConfiguration gc = SimpleUniverse.getPreferredConfiguration();
@@ -53,6 +42,8 @@ public class Driver extends Applet {
 			throw new RuntimeException(e);
 		}
 		BranchGroup player = createPlayer();
+		pipes = createPipe();
+		pipes.setCapability(BranchGroup.ALLOW_DETACH);
 		pipes.compile();
 		player.compile();
 		
@@ -61,6 +52,27 @@ public class Driver extends Applet {
 		su.addBranchGraph(pipes);
 		su.addBranchGraph(back);
 		su.addBranchGraph(player);
+		//Gets called every time that the timer goes off
+		ActionListener recreatePipes=new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Remove the pipes from the univers
+				su.getLocale().removeBranchGraph(pipes);
+				//Recreate the pipes
+				pipes=createPipe();
+				pipes.setCapability(BranchGroup.ALLOW_DETACH);
+				pipes.compile();
+				//Add pipes back to the universe
+				su.addBranchGraph(pipes);
+				
+			}
+			
+		};
+		Timer timer=new Timer(3000,recreatePipes);
+		timer.setRepeats(true);
+		timer.start();
+		
 	}
 
 	public BranchGroup createPipe() {
@@ -73,50 +85,38 @@ public class Driver extends Applet {
 		int gap=3;
 		int y=(int) Math.floor(Math.random() * 10 - 5);
 
-		pipe1=new Pipe(y);
-		pipe2=new Pipe(-y+gap);
-		tr = new Transform3D();
+		Shape3D pipe1=new Pipe(y);
+		Shape3D pipe2=new Pipe(-y+gap);
+		Transform3D tr = new Transform3D();
 		tr.setScale(0.1);
-		tg = new TransformGroup(tr);
+		tr.setTranslation(new Vector3d(2f,0,0));
+		TransformGroup tg = new TransformGroup(tr);
+		tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+		tg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		//GameThreads gThread1=new GameThreads(tg);
+		//gThread1.start();
 		move.addChild(tg);
 		tg.addChild(pipe1);
 
 		//Flip pipe on X axis
-		tr2 = new Transform3D();
+		Transform3D tr2 = new Transform3D();
 		tr2.setScale(new Vector3d(0.1,-0.1,0.1));
-		tg2=new TransformGroup(tr2);
+		tr2.setTranslation(new Vector3d(2f,0,0));
+		TransformGroup tg2=new TransformGroup(tr2);
+		tg2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		move.addChild(tg2);
 		tg2.addChild(pipe2);
 	
-		// move the pipes
-		Alpha alpha = new Alpha(-1, 2800);
-		//Create an executioner to constantly change y position of pipes
-		Runnable changeY = new Runnable() {
-		    public void run() {
-		    	System.out.print("help");
-		    	double rand=Math.floor(Math.random() * 10 - 5);
-			    Vector3d translation=new Vector3d();
-			    tr.get(translation);
-			    tr.setTranslation(new Vector3d(translation.x,rand,translation.z));
-			   // tg.setTransform(tr);
-			    
-			    Vector3d translation2=new Vector3d();
-			    tr2.get(translation2);
-			    tr2.setTranslation(new Vector3d(translation2.x,-rand+gap,translation2.z));
-		    	//tg2.setTransform(tr2);
-		    }
-		};
-
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-		executor.scheduleAtFixedRate(changeY, 0, 3, TimeUnit.SECONDS);
-		
-		transform = new PositionInterpolator(alpha, move);
-		transform.setStartPosition(1f);
-		transform.setEndPosition(-3f);
+		// move the pipes across the screen
+		Alpha alpha = new Alpha(-1, 3000);
+		PositionInterpolator pos = new PositionInterpolator(alpha, move);
+		pos.setStartPosition(2f);
+		pos.setEndPosition(-4f);
 		BoundingSphere bounds = new BoundingSphere();
-		transform.setSchedulingBounds(bounds);
+		pos.setSchedulingBounds(bounds);
+		move.addChild(pos);
 		
-		move.addChild(transform);
+		//Add Lighting to pipes
 		AmbientLight light = new AmbientLight(true, new Color3f(Color.gray));
 		light.setInfluencingBounds(bounds);
 		pipes.addChild(light);
@@ -131,7 +131,7 @@ public class Driver extends Applet {
 		pipes.addChild(ptlight3);
 		return pipes;
 	}
-
+	
 	private BranchGroup createBackground() throws IOException {
 		BranchGroup backgroundGroup = new BranchGroup();
 
@@ -177,4 +177,5 @@ public class Driver extends Applet {
 		System.setProperty("sun.awt.noerasebackground", "true");
 		new MainFrame( new Driver(), 640, 480);
 	}
+	
 }

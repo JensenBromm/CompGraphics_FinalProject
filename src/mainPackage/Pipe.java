@@ -5,12 +5,10 @@ import javax.media.j3d.Material;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
 import javax.vecmath.Point3d;
-
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 
 public class Pipe extends Shape3D{
-
 	public Pipe(int y) {
 		GeometryInfo gi=new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
 		Point3d[] vertices=
