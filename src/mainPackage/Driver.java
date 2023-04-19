@@ -10,6 +10,7 @@ import javax.media.j3d.*;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import javax.xml.crypto.dsig.Transform;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -32,15 +33,15 @@ public class Driver extends Applet {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-//		BranchGroup player = createPlayer();
+		BranchGroup player = createPlayer();
 		pipes.compile();
-//		player.compile();
+		player.compile();
 
 		SimpleUniverse su = new SimpleUniverse(cv);
 		su.getViewingPlatform().setNominalViewingTransform();
 		su.addBranchGraph(pipes);
 		su.addBranchGraph(back);
-//		su.addBranchGraph(player);
+		su.addBranchGraph(player);
 	}
 
 	private BranchGroup createPipe() {
@@ -60,7 +61,7 @@ public class Driver extends Applet {
 		TransformGroup tg = new TransformGroup(tr);
 		spin.addChild(tg);
 		tg.addChild(pipe1);
-		
+
 		//Flip pipe on X axis
 		Transform3D tr2 = new Transform3D();
 		tr2.setScale(new Vector3d(0.1,-0.1,0.1));
@@ -109,21 +110,22 @@ public class Driver extends Applet {
 		Appearance ap = new Appearance();
 		ap.setMaterial(new Material());
 
-		Sphere sphere = new Sphere(1.0f);
-		Shape3D sphereShape = sphere.getShape();
+		Sphere playerShape = new Sphere(1.0f);
+		playerShape.setAppearance(ap);
 
 		Transform3D tr = new Transform3D();
-		tr.setScale(0.2);
+		tr.setScale(0.08);
+		tr.setTranslation(new Vector3d(-0.5,0, 0));
+		TransformGroup tg1 = new TransformGroup(tr);
+		tg1.addChild(playerShape);
 
-		TransformGroup tg = new TransformGroup(tr);
-		tg.addChild(sphereShape);
+		player.addChild(tg1);
+		//light
+		PointLight light = new PointLight(new Color3f(Color.black), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
 
-		PointLight light = new PointLight(new Color3f(Color.white), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
 		BoundingSphere bounds = new BoundingSphere();
-
 		light.setInfluencingBounds(bounds);
 		player.addChild(light);
-		player.addChild(tg);
 
 		return player;
 	}
