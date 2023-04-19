@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.media.j3d.*;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3d;
 import javax.xml.crypto.dsig.Transform;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -49,16 +50,23 @@ public class Driver extends Applet {
 		spin.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		pipes.addChild(spin);
 		// object
-		int y1=new Random().nextInt(5);
-		int y2=new Random().nextInt(2);
-		Shape3D pipe1=new Pipe(y1);
-		Shape3D pipe2=new Pipe(y2);
+		int gap=3;
+		int y=(int) Math.floor(Math.random() * 10 - 5);
+
+		Shape3D pipe1=new Pipe(y);
+		Shape3D pipe2=new Pipe(-y+gap);
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.1);
 		TransformGroup tg = new TransformGroup(tr);
 		spin.addChild(tg);
 		tg.addChild(pipe1);
-		tg.addChild(pipe2);
+		
+		//Flip pipe on X axis
+		Transform3D tr2 = new Transform3D();
+		tr2.setScale(new Vector3d(0.1,-0.1,0.1));
+		TransformGroup tg2=new TransformGroup(tr2);
+		spin.addChild(tg2);
+		tg2.addChild(pipe2);
 
 		// rotator
 		Alpha alpha = new Alpha(-1, 24000);
@@ -66,15 +74,18 @@ public class Driver extends Applet {
 		BoundingSphere bounds = new BoundingSphere();
 		rotator.setSchedulingBounds(bounds);
 		spin.addChild(rotator);
-		AmbientLight light = new AmbientLight(true, new Color3f(Color.black));
+		AmbientLight light = new AmbientLight(true, new Color3f(Color.gray));
 		light.setInfluencingBounds(bounds);
 		pipes.addChild(light);
-		PointLight ptlight = new PointLight(new Color3f(Color.gray), new Point3f(1f, 1f,1f), new Point3f(1f, 0f, 0f));
+		PointLight ptlight = new PointLight(new Color3f(Color.WHITE), new Point3f(0f, 3f,0f), new Point3f(1f, 0f, 0f));
 		ptlight.setInfluencingBounds(bounds);
 		pipes.addChild(ptlight);
-		PointLight ptlight2 = new PointLight(new Color3f(Color.gray), new Point3f(-2f, 2f, 2f), new Point3f(1f, 0f, 0f));
+		PointLight ptlight2 = new PointLight(new Color3f(Color.WHITE),new Point3f(0.0f,0.0f,0.0f), new Point3f(1f,0f,0f));
 		ptlight2.setInfluencingBounds(bounds);
 		pipes.addChild(ptlight2);
+		PointLight ptlight3 = new PointLight(new Color3f(Color.WHITE),new Point3f(0,5f,-1f), new Point3f(1f,0.5f,0f));
+		ptlight3.setInfluencingBounds(bounds);
+		pipes.addChild(ptlight3);
 		return pipes;
 	}
 

@@ -70,22 +70,22 @@ public class Pipe extends Shape3D{
 					new Point3d(-0.7071,y+0.5,-0.7071),//Point 46
 					new Point3d(-0.9239,y+0.5,-0.3827),//Point 47
 				//Create inner Circle Back Face	
-					new Point3d(-1,y+10,0), //Point 48
-					new Point3d(-0.9239,y+10,0.3827), //Point 49
-					new Point3d(-0.7071,y+10,0.7071), //Point 50
-					new Point3d(-0.3827,y+10,0.9239), //Point 51
+					new Point3d(-1,y+20,0), //Point 48
+					new Point3d(-0.9239,y+20,0.3827), //Point 49
+					new Point3d(-0.7071,y+20,0.7071), //Point 50
+					new Point3d(-0.3827,y+20,0.9239), //Point 51
 					new Point3d(0,y+10,1), //Point 52
-					new Point3d(0.3827,y+10,0.9239),//Point 53
-					new Point3d(0.7071,y+10,0.7071), //Point 54
-					new Point3d(0.9239,y+10,0.3827),//Point 55
-					new Point3d(1,y+10,0), //Point 56
-					new Point3d(0.9239,y+10,-0.3827),//Point 57
-					new Point3d(0.7071,y+10,-0.7071), //Point 58
-					new Point3d(0.3827,y+10,-0.9239), //Point 59
-					new Point3d(0,y+10,-1), //Point 60
-					new Point3d(-0.3827,y+10,-0.9239), //Point 61
-					new Point3d(-0.7071,y+10,-0.7071),//Point 62
-					new Point3d(-0.9239,y+10,-0.3827),//Point 63
+					new Point3d(0.3827,y+20,0.9239),//Point 53
+					new Point3d(0.7071,y+20,0.7071), //Point 54
+					new Point3d(0.9239,y+20,0.3827),//Point 55
+					new Point3d(1,y+20,0), //Point 56
+					new Point3d(0.9239,y+20,-0.3827),//Point 57
+					new Point3d(0.7071,y+20,-0.7071), //Point 58
+					new Point3d(0.3827,y+20,-0.9239), //Point 59
+					new Point3d(0,y+20,-1), //Point 60
+					new Point3d(-0.3827,y+20,-0.9239), //Point 61
+					new Point3d(-0.7071,y+20,-0.7071),//Point 62
+					new Point3d(-0.9239,y+20,-0.3827),//Point 63
 			};
 		
 		int [] indices=
@@ -155,6 +155,7 @@ public class Pipe extends Shape3D{
         
         Material m=new Material();
         m.setDiffuseColor(0f, 1f, 0f);
+        m.setAmbientColor(0f,1f,0f);
         a.setMaterial(m);
         this.setAppearance(a);
 	}
