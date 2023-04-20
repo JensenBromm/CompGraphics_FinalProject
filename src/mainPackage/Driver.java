@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.media.j3d.*;
 import javax.swing.Timer;
 import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import java.awt.*;
@@ -22,6 +23,15 @@ public class Driver extends Applet {
 	
 	public SimpleUniverse su;
 	public BranchGroup pipes;
+	public CollisionDetector cd1;
+	public CollisionDetector cd2;
+	
+	public TransformGroup tg;
+	public TransformGroup tg2;
+	
+	public Sphere playerShape;
+	public Shape3D pipe1;
+	public Shape3D pipe2;
 	
 	public void init() {
 		GraphicsConfiguration gc = SimpleUniverse.getPreferredConfiguration();
@@ -47,7 +57,9 @@ public class Driver extends Applet {
 		pipes.compile();
 		player.compile();
 		
-
+		BranchGroup colDetectors=new BranchGroup();
+		colDetectors.addChild(cd1);
+		colDetectors.addChild(cd2);
 	
 		su.addBranchGraph(pipes);
 		su.addBranchGraph(back);
@@ -85,12 +97,12 @@ public class Driver extends Applet {
 		int gap=3;
 		int y=(int) Math.floor(Math.random() * 10 - 5);
 
-		Shape3D pipe1=new Pipe(y);
-		Shape3D pipe2=new Pipe(-y+gap);
+		pipe1=new Pipe(y);
+		pipe2=new Pipe(-y+gap);
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.1);
 		tr.setTranslation(new Vector3d(2f,0,0));
-		TransformGroup tg = new TransformGroup(tr);
+		tg = new TransformGroup(tr);
 		tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		tg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		//GameThreads gThread1=new GameThreads(tg);
@@ -102,10 +114,12 @@ public class Driver extends Applet {
 		Transform3D tr2 = new Transform3D();
 		tr2.setScale(new Vector3d(0.1,-0.1,0.1));
 		tr2.setTranslation(new Vector3d(2f,0,0));
-		TransformGroup tg2=new TransformGroup(tr2);
+		tg2=new TransformGroup(tr2);
 		tg2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		move.addChild(tg2);
 		tg2.addChild(pipe2);
+		
+		
 	
 		// move the pipes across the screen
 		Alpha alpha = new Alpha(-1, 3000);
@@ -115,6 +129,7 @@ public class Driver extends Applet {
 		BoundingSphere bounds = new BoundingSphere();
 		pos.setSchedulingBounds(bounds);
 		move.addChild(pos);
+		
 		
 		//Add Lighting to pipes
 		AmbientLight light = new AmbientLight(true, new Color3f(Color.gray));
@@ -152,8 +167,10 @@ public class Driver extends Applet {
 		Appearance ap = new Appearance();
 		ap.setMaterial(new Material());
 
-		Sphere playerShape = new Sphere(1.0f);
+		playerShape = new Sphere(1.0f);
 		playerShape.setAppearance(ap);
+		playerShape.setCollidable(true);
+		
 
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.08);
@@ -162,12 +179,23 @@ public class Driver extends Applet {
 		tg1.addChild(playerShape);
 
 		player.addChild(tg1);
+		
+		
 		//light
 		PointLight light = new PointLight(new Color3f(Color.black), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
 
 		BoundingSphere bounds = new BoundingSphere();
 		light.setInfluencingBounds(bounds);
 		player.addChild(light);
+		
+		//Collision detector for top pipe
+		Shape3D pSphere=playerShape.getShape();
+		pSphere.setCollidable(true);
+		cd1=new CollisionDetector(pSphere,pipe1);
+		cd1.setSchedulingBounds(bounds);
+		       
+		cd2=new CollisionDetector(pSphere,pipe2);
+		cd2.setSchedulingBounds(bounds);
 
 		return player;
 	}

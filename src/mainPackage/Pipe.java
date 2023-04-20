@@ -72,7 +72,7 @@ public class Pipe extends Shape3D{
 						new Point3d(-0.9239,y+20,0.3827), //Point 49
 						new Point3d(-0.7071,y+20,0.7071), //Point 50
 						new Point3d(-0.3827,y+20,0.9239), //Point 51
-						new Point3d(0,y+10,1), //Point 52
+						new Point3d(0,y+20,1), //Point 52
 						new Point3d(0.3827,y+20,0.9239),//Point 53
 						new Point3d(0.7071,y+20,0.7071), //Point 54
 						new Point3d(0.9239,y+20,0.3827),//Point 55
@@ -156,5 +156,8 @@ public class Pipe extends Shape3D{
 		m.setAmbientColor(0f,1f,0f);
 		a.setMaterial(m);
 		this.setAppearance(a);
+		
+		this.setCollidable(true);
+		this.setBoundsAutoCompute(true);
 	}
 }
