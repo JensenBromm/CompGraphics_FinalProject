@@ -64,9 +64,14 @@ public class Driver extends Applet {
 		colDetectors.setCapability(BranchGroup.ALLOW_DETACH);
 		colDetectors.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
 		colDetectors.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
+		cd1=new CollisionDetector(pSphere,pipe1);
+		cd1.setSchedulingBounds(new BoundingSphere());    
+		cd2=new CollisionDetector(pSphere,pipe2);
+		cd2.setSchedulingBounds(new BoundingSphere());
 		colDetectors.addChild(cd1);
 		colDetectors.addChild(cd2);
 	
+		su.addBranchGraph(colDetectors);
 		su.addBranchGraph(pipes);
 		su.addBranchGraph(back);
 		su.addBranchGraph(player);
@@ -118,15 +123,19 @@ public class Driver extends Applet {
 		move.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		pipes.addChild(move);
 		// object
-		int gap=4;
-		int y=2;
+		int gap=5;
+		double y= 2.5;//(Math.random()*10-5);
 
 		pipe1=new Pipe(y);
 		pipe2=new Pipe(-y+gap);
 		
 		pipe1.setBoundsAutoCompute(true);
+		pipe1.setCollidable(true);
+		//pipe1.setCollisionBounds(new BoundingBox(new Point3d(0,y,0),new Point3d(0,y+20,0)));
 		pipe1.setPickable(true);
 		pipe2.setBoundsAutoCompute(true);
+		pipe2.setCollidable(true);
+		//pipe2.setCollisionBounds(new BoundingSphere(new Point3d(0, -y+1, 0), 1));
 		pipe2.setPickable(true);
 		
 		Transform3D tr = new Transform3D();
@@ -220,6 +229,7 @@ public class Driver extends Applet {
 		
 		pSphere=playerShape.getShape();
 		pSphere.setBoundsAutoCompute(true);
+		pSphere.setCollisionBounds(new BoundingSphere(new Point3d(0, 0, 0), 0.5));
 		pSphere.setPickable(true);
 		pSphere.setCollidable(true);
 		
