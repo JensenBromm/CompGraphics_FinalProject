@@ -30,6 +30,7 @@ public class Driver extends Applet {
 	public TransformGroup tg2;
 	
 	public Sphere playerShape;
+	public Shape3D pSphere;
 	public Shape3D pipe1;
 	public Shape3D pipe2;
 	
@@ -42,9 +43,6 @@ public class Driver extends Applet {
 		su = new SimpleUniverse(cv);
 		su.getViewingPlatform().setNominalViewingTransform();
 		
-		
-
-		
 		BranchGroup back = null;
 		try {
 			back = createBackground();
@@ -52,12 +50,20 @@ public class Driver extends Applet {
 			throw new RuntimeException(e);
 		}
 		BranchGroup player = createPlayer();
+		player.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
+		player.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
 		pipes = createPipe();
+		pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
+		pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
 		pipes.setCapability(BranchGroup.ALLOW_DETACH);
+		pipes.setPickable(true);
 		pipes.compile();
 		player.compile();
-		
+				
 		BranchGroup colDetectors=new BranchGroup();
+		colDetectors.setCapability(BranchGroup.ALLOW_DETACH);
+		colDetectors.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
+		colDetectors.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
 		colDetectors.addChild(cd1);
 		colDetectors.addChild(cd2);
 	
@@ -71,12 +77,30 @@ public class Driver extends Applet {
 			public void actionPerformed(ActionEvent e) {
 				//Remove the pipes from the univers
 				su.getLocale().removeBranchGraph(pipes);
+				su.getLocale().removeBranchGraph(colDetectors);
 				//Recreate the pipes
 				pipes=createPipe();
 				pipes.setCapability(BranchGroup.ALLOW_DETACH);
+				pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
+				pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
+				pipes.setPickable(true);
 				pipes.compile();
+				
+				BoundingSphere bounds = new BoundingSphere();
+				//Collision detector for top pipe
+				//Set a collider with the top pipe
+				cd1=new CollisionDetector(pSphere,pipe1);
+				cd1.setSchedulingBounds(bounds);    
+				cd2=new CollisionDetector(pSphere,pipe2);
+				cd2.setSchedulingBounds(bounds);
+				
+				colDetectors.removeAllChildren();
+				colDetectors.addChild(cd1);
+				colDetectors.addChild(cd2);
+				
 				//Add pipes back to the universe
 				su.addBranchGraph(pipes);
+				su.addBranchGraph(colDetectors);
 				
 			}
 			
@@ -84,7 +108,7 @@ public class Driver extends Applet {
 		Timer timer=new Timer(3000,recreatePipes);
 		timer.setRepeats(true);
 		timer.start();
-		
+
 	}
 
 	public BranchGroup createPipe() {
@@ -94,11 +118,17 @@ public class Driver extends Applet {
 		move.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		pipes.addChild(move);
 		// object
-		int gap=3;
-		int y=(int) Math.floor(Math.random() * 10 - 5);
+		int gap=4;
+		int y=2;
 
 		pipe1=new Pipe(y);
 		pipe2=new Pipe(-y+gap);
+		
+		pipe1.setBoundsAutoCompute(true);
+		pipe1.setPickable(true);
+		pipe2.setBoundsAutoCompute(true);
+		pipe2.setPickable(true);
+		
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.1);
 		tr.setTranslation(new Vector3d(2f,0,0));
@@ -170,7 +200,7 @@ public class Driver extends Applet {
 		playerShape = new Sphere(1.0f);
 		playerShape.setAppearance(ap);
 		playerShape.setCollidable(true);
-		
+		playerShape.setBoundsAutoCompute(true);
 
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.08);
@@ -188,14 +218,11 @@ public class Driver extends Applet {
 		light.setInfluencingBounds(bounds);
 		player.addChild(light);
 		
-		//Collision detector for top pipe
-		Shape3D pSphere=playerShape.getShape();
+		pSphere=playerShape.getShape();
+		pSphere.setBoundsAutoCompute(true);
+		pSphere.setPickable(true);
 		pSphere.setCollidable(true);
-		cd1=new CollisionDetector(pSphere,pipe1);
-		cd1.setSchedulingBounds(bounds);
-		       
-		cd2=new CollisionDetector(pSphere,pipe2);
-		cd2.setSchedulingBounds(bounds);
+		
 
 		return player;
 	}
