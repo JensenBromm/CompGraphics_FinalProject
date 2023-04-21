@@ -131,12 +131,11 @@ public class Driver extends Applet {
 		
 		pipe1.setBoundsAutoCompute(true);
 		pipe1.setCollidable(true);
-		//pipe1.setCollisionBounds(new BoundingBox(new Point3d(0,y,0),new Point3d(0,y+20,0)));
 		pipe1.setPickable(true);
 		pipe2.setBoundsAutoCompute(true);
 		pipe2.setCollidable(true);
-		//pipe2.setCollisionBounds(new BoundingSphere(new Point3d(0, -y+1, 0), 1));
 		pipe2.setPickable(true);
+		
 		
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.1);
