@@ -17,10 +17,20 @@ public class CollisionDetector extends Behavior {
         this.shape2 = shape2;
     }
 
+    /* Called when a behavior is added to a WakeupCondition object
+     * WakeupOnCollisionEntry.USE_GEOMETRY sets the collision bounds of the objects to their shape
+     * Without this line the bounds are too large and a collision is detected in between the pipes
+     */
     public void initialize() {
         this.wakeupOn(new WakeupOnCollisionEntry(shape1, WakeupOnCollisionEntry.USE_GEOMETRY));
     }
 
+    /*
+     * Looops through everything that triggered a wakeup
+     * Checks if it is a wakeup on a collision entry
+     * Checks if the collision is with shape 2
+     * 			Shape 2 is always the top or bottom pipe
+     */
     public void processStimulus(Enumeration criteria) {
         while (criteria.hasMoreElements()) {
             WakeupCriterion criterion = (WakeupCriterion) criteria.nextElement();

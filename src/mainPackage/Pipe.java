@@ -11,6 +11,11 @@ import com.sun.j3d.utils.geometry.NormalGenerator;
 public class Pipe extends Shape3D{
 	public Pipe(double y) {
 		GeometryInfo gi=new GeometryInfo(GeometryInfo.POLYGON_ARRAY);
+		/*
+		 * The vertices array stores a bunch of points that are connected inside the indices array to form the outer rim and neck of the pipe
+		 * The Strip Counts array is the amount of points we are connecting per line
+		 * All of these arrays are sepearated into lines to make it easier to read
+		 */
 		Point3d[] vertices=
 				{
 						//Create Outer Rim
@@ -142,22 +147,24 @@ public class Pipe extends Shape3D{
 		ng.generateNormals(gi);
 
 		gi.indexify();
-
+		
 		this.setGeometry(gi.getIndexedGeometryArray());
 
+		//Make the pipes opaque
 		Appearance a=new Appearance();
 		PolygonAttributes pa = new PolygonAttributes();
 		pa.setBackFaceNormalFlip(true);
 		pa.setCullFace(PolygonAttributes.CULL_NONE);
 		a.setPolygonAttributes(pa);
 
+		//Make the pipes green
 		Material m=new Material();
 		m.setDiffuseColor(0f, 1f, 0f);
 		m.setAmbientColor(0f,1f,0f);
 		a.setMaterial(m);
 		this.setAppearance(a);
 		
-		this.setCollidable(true);
+		this.setCollidable(true); //Make sure that the pipes are set to allow collisions
 		this.setBoundsAutoCompute(true);
 	}
 }
