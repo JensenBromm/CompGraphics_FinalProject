@@ -124,7 +124,7 @@ public class Driver extends Applet {
 		pipes.addChild(move);
 		// object
 		int gap=5;
-		double y= 2.5;//(Math.random()*10-5);
+		double y=(Math.random()*10-5);
 
 		pipe1=new Pipe(y);
 		pipe2=new Pipe(-y+gap);

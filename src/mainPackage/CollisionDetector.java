@@ -18,7 +18,7 @@ public class CollisionDetector extends Behavior {
     }
 
     public void initialize() {
-        this.wakeupOn(new WakeupOnCollisionEntry(shape1));
+        this.wakeupOn(new WakeupOnCollisionEntry(shape1, WakeupOnCollisionEntry.USE_GEOMETRY));
     }
 
     public void processStimulus(Enumeration criteria) {
