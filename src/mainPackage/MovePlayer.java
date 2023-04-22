@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 
 public class MovePlayer extends Behavior {
-    private final float MOVE_UP = 0.05f;
-    private final float MOVE_DOWN = -0.05f;
+    private final float MOVE_UP = 0.1f;
+    private final float MOVE_DOWN = -0.1f;
 
     private WakeupCondition awake = null;
     private WakeupCriterion[] wakeupArray = new WakeupCriterion[1];
@@ -68,11 +68,13 @@ public class MovePlayer extends Behavior {
 
                     switch (keyCode)
                     {
+                        case KeyEvent.VK_W:
                         case KeyEvent.VK_UP:
                             translate.y += MOVE_UP;
                             break;
 
-                        case KeyEvent.VK_RIGHT:
+                        case KeyEvent.VK_S:
+                        case KeyEvent.VK_DOWN:
                             translate.y += MOVE_DOWN;
                             break;
                     }

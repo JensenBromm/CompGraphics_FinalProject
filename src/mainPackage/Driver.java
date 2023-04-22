@@ -35,6 +35,8 @@ public class Driver extends Applet {
 	public Shape3D scoreShape;
 	
 	public BoundingSphere bounds = new BoundingSphere();
+
+	public static boolean gameOver = false;
 	
 	
 	public void init() {
@@ -131,27 +133,27 @@ public class Driver extends Applet {
 				pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
 				pipes.setPickable(true);
 				pipes.compile();
-				
+
 				//Remove the past colliders
 				colDetectors.removeAllChildren();
-				
+
 				//Recreate Colliders for the new pipes
 				createColliders();
 				//Add the new colliders
 				colDetectors.addChild(cd1);
 				colDetectors.addChild(cd2);
-				
+
 				/*
 				 * Since the timer will only get called when the player has passed a set of pipes
 				 * We can update the score whenever the past set of pipes was deleted
 				 */
 				updateScore();
-				
+
 				//Add pipes back to the universe
 				su.addBranchGraph(pipes);
 				su.addBranchGraph(colDetectors);
 			}
-			
+
 		};
 		//Create the timer that runs every 3 seconds
 		Timer timer=new Timer(3000,recreatePipes);
@@ -271,11 +273,6 @@ public class Driver extends Applet {
 
 		tg1.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		tg1.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-
-		KeyNavigatorBehavior key = new KeyNavigatorBehavior(tg1);
-		key.setSchedulingBounds(bounds);
-		key.setEnable(true);
-		player.addChild(key);
 		
 		//light
 		PointLight light = new PointLight(new Color3f(Color.black), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
@@ -284,6 +281,7 @@ public class Driver extends Applet {
 		player.addChild(light);
 
 		Behavior b = new MovePlayer(tg1);
+		b.setSchedulingBounds(bounds);
 		player.addChild(b);
 		
 		pSphere=playerShape.getShape();

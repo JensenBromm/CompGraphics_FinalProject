@@ -38,6 +38,7 @@ public class CollisionDetector extends Behavior {
                 WakeupOnCollisionEntry collisionEntry = (WakeupOnCollisionEntry) criterion;
                 if (collisionEntry.getTriggeringPath().getObject() == shape2) {
                     System.out.println("Collision detected!");
+                    Driver.gameOver = true;
                     //System.exit(1);
                 }
             }
