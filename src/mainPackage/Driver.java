@@ -1,6 +1,7 @@
 package mainPackage;
 
 import com.sun.j3d.utils.applet.MainFrame;
+import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
@@ -250,6 +251,7 @@ public class Driver extends Applet {
 
 	private BranchGroup createPlayer() {
 		BranchGroup player = new BranchGroup();
+		BoundingSphere bounds = new BoundingSphere();
 
 		Appearance ap = new Appearance();
 		ap.setMaterial(new Material());
@@ -264,16 +266,25 @@ public class Driver extends Applet {
 		tr.setTranslation(new Vector3d(-0.5,0, 0));
 		TransformGroup tg1 = new TransformGroup(tr);
 		tg1.addChild(playerShape);
-
+		tg1.setTransform(tr);
 		player.addChild(tg1);
-		
+
+		tg1.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+		tg1.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+
+		KeyNavigatorBehavior key = new KeyNavigatorBehavior(tg1);
+		key.setSchedulingBounds(bounds);
+		key.setEnable(true);
+		player.addChild(key);
 		
 		//light
 		PointLight light = new PointLight(new Color3f(Color.black), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
 
-		BoundingSphere bounds = new BoundingSphere();
 		light.setInfluencingBounds(bounds);
 		player.addChild(light);
+
+		Behavior b = new MovePlayer(tg1);
+		player.addChild(b);
 		
 		pSphere=playerShape.getShape();
 		pSphere.setBoundsAutoCompute(true);
