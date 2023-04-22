@@ -106,7 +106,7 @@ public class Driver extends Applet {
 		//Add original branchGroups to the simple universe
 		su.addBranchGraph(scoreGraph);
 		su.addBranchGraph(colDetectors);
-//		su.addBranchGraph(pipes);
+		su.addBranchGraph(pipes);
 		su.addBranchGraph(back);
 		su.addBranchGraph(player);
 		
@@ -168,7 +168,7 @@ public class Driver extends Applet {
 
 		};
 		//Create the timer that runs every 3 seconds
-		Timer timer=new Timer(3000,recreatePipes);
+		Timer timer=new Timer(3500,recreatePipes);
 		timer.setRepeats(true);
 		timer.start();
 		started = true;
@@ -224,7 +224,7 @@ public class Driver extends Applet {
 		
 	
 		//The PositionInterpolator allows the pipes to move across the screen
-		Alpha alpha = new Alpha(-1, 3000);
+		Alpha alpha = new Alpha(-1, 3500);
 		PositionInterpolator pos = new PositionInterpolator(alpha, move);
 		pos.setStartPosition(2f);
 		pos.setEndPosition(-4f);
