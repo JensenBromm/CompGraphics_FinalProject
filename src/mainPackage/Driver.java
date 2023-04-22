@@ -9,10 +9,7 @@ import java.applet.Applet;
 import javax.imageio.ImageIO;
 import javax.media.j3d.*;
 import javax.swing.Timer;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3d;
+import javax.vecmath.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +34,8 @@ public class Driver extends Applet {
 	public BoundingSphere bounds = new BoundingSphere();
 
 	public static boolean gameOver = false;
+	private boolean started = false;
+	private boolean stopped = false;
 	
 	
 	public void init() {
@@ -60,6 +59,7 @@ public class Driver extends Applet {
 		//Set the capabilities so that the player can collide with pipes
 		player.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
 		player.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
+		player.setCapability(BranchGroup.ALLOW_DETACH);
 		player.compile();
 		
 		//Create the pipe branch group
@@ -106,7 +106,7 @@ public class Driver extends Applet {
 		//Add original branchGroups to the simple universe
 		su.addBranchGraph(scoreGraph);
 		su.addBranchGraph(colDetectors);
-		su.addBranchGraph(pipes);
+//		su.addBranchGraph(pipes);
 		su.addBranchGraph(back);
 		su.addBranchGraph(player);
 		
@@ -122,36 +122,48 @@ public class Driver extends Applet {
 				 * We also have to reset the colliders for the player and pipes since the pipes are being removed
 				 * We then re-add these new pipes to the universe
 				 */
-				//Remove the pipes from the univers
-				su.getLocale().removeBranchGraph(pipes);
-				su.getLocale().removeBranchGraph(colDetectors);
-				//Recreate the pipes
-				pipes=createPipe();
-				//Reset capabilities of the pipes graph
-				pipes.setCapability(BranchGroup.ALLOW_DETACH);
-				pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
-				pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
-				pipes.setPickable(true);
-				pipes.compile();
+				if (!gameOver) {
+					//Remove the pipes from the univers
+					if (started) {
+						su.getLocale().removeBranchGraph(pipes);
+					}
+					su.getLocale().removeBranchGraph(colDetectors);
+					//Recreate the pipes
+					pipes=createPipe();
+					//Reset capabilities of the pipes graph
+					pipes.setCapability(BranchGroup.ALLOW_DETACH);
+					pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_WRITE);
+					pipes.setCapability(BranchGroup.ALLOW_COLLIDABLE_READ);
+					pipes.setPickable(true);
+					pipes.compile();
 
-				//Remove the past colliders
-				colDetectors.removeAllChildren();
+					//Remove the past colliders
+					colDetectors.removeAllChildren();
 
-				//Recreate Colliders for the new pipes
-				createColliders();
-				//Add the new colliders
-				colDetectors.addChild(cd1);
-				colDetectors.addChild(cd2);
+					//Recreate Colliders for the new pipes
+					createColliders();
+					//Add the new colliders
+					colDetectors.addChild(cd1);
+					colDetectors.addChild(cd2);
 
-				/*
-				 * Since the timer will only get called when the player has passed a set of pipes
-				 * We can update the score whenever the past set of pipes was deleted
-				 */
-				updateScore();
+					/*
+					 * Since the timer will only get called when the player has passed a set of pipes
+					 * We can update the score whenever the past set of pipes was deleted
+					 */
+					updateScore();
 
-				//Add pipes back to the universe
-				su.addBranchGraph(pipes);
-				su.addBranchGraph(colDetectors);
+					//Add pipes back to the universe
+					su.addBranchGraph(pipes);
+					su.addBranchGraph(colDetectors);
+				}
+				else {
+					if (!stopped) {
+						su.getLocale().removeBranchGraph(pipes);
+						su.getLocale().removeBranchGraph(player);
+						su.addBranchGraph(createGameOver());
+						stopped = true;
+					}
+				}
 			}
 
 		};
@@ -159,6 +171,7 @@ public class Driver extends Applet {
 		Timer timer=new Timer(3000,recreatePipes);
 		timer.setRepeats(true);
 		timer.start();
+		started = true;
 
 	}
 
@@ -249,6 +262,34 @@ public class Driver extends Applet {
 
 		return backgroundGroup;
 
+	}
+
+	private BranchGroup createGameOver() {
+		BranchGroup gameOverGroup = new BranchGroup();
+
+		Appearance ap = new Appearance();
+		ap.setMaterial(new Material());
+
+		Font3D font = new Font3D(new Font("SansSerif", Font.PLAIN, 1), new FontExtrusion());
+
+		Text3D gameOverText = new Text3D(font, "Game Over!");
+		Shape3D gameOverShape = new Shape3D(gameOverText, ap);
+
+		Transform3D tr = new Transform3D();
+		tr.setScale(0.3);
+		tr.setTranslation(new Vector3f(-0.8f, 0f, 0f));
+		TransformGroup tg1 = new TransformGroup(tr);
+		tg1.addChild(gameOverShape);
+
+		gameOverGroup.addChild(tg1);
+
+		PointLight light = new PointLight(new Color3f(Color.white), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
+
+		BoundingSphere bounds = new BoundingSphere();
+		light.setInfluencingBounds(bounds);
+		gameOverGroup.addChild(light);
+
+		return gameOverGroup;
 	}
 
 	private BranchGroup createPlayer() {
