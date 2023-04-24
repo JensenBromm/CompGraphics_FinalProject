@@ -251,12 +251,16 @@ public class Driver extends Applet {
 	}
 	
 	private BranchGroup createBackground() throws IOException {
+		//Create a branchgroup to hold our background objects
 		BranchGroup backgroundGroup = new BranchGroup();
 
+		//Want to use an image so BufferedImage and ImageComponent will provide this functionality
 		BufferedImage backImage = ImageIO.read(new File("res/back.png"));
 		ImageComponent2D imageComp = new ImageComponent2D(ImageComponent.FORMAT_RGB, backImage);
 
+		//Create Background object and use imageComp in the constructor
 		Background b = new Background(imageComp);
+		//Set bounds
 		b.setApplicationBounds(new BoundingSphere());
 		backgroundGroup.addChild(b);
 
@@ -265,24 +269,28 @@ public class Driver extends Applet {
 	}
 
 	private BranchGroup createGameOver() {
+		//Create a game over branch group when the game ends
 		BranchGroup gameOverGroup = new BranchGroup();
 
-		Appearance ap = new Appearance();
+		Appearance ap = new Appearance();	//Create an appearance for the words
 		ap.setMaterial(new Material());
 
 		Font3D font = new Font3D(new Font("SansSerif", Font.PLAIN, 1), new FontExtrusion());
 
 		Text3D gameOverText = new Text3D(font, "Game Over!");
-		Shape3D gameOverShape = new Shape3D(gameOverText, ap);
+		Shape3D gameOverShape = new Shape3D(gameOverText, ap);	//Turn gameOverText into a shape3D object
 
+		//Apply transforms for positioning and scale
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.3);
 		tr.setTranslation(new Vector3f(-0.8f, 0f, 0f));
 		TransformGroup tg1 = new TransformGroup(tr);
 		tg1.addChild(gameOverShape);
 
+		//Add transform group to branch group
 		gameOverGroup.addChild(tg1);
 
+		//Applying lighting to the game over text
 		PointLight light = new PointLight(new Color3f(Color.white), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
 
 		BoundingSphere bounds = new BoundingSphere();
@@ -293,17 +301,25 @@ public class Driver extends Applet {
 	}
 
 	private BranchGroup createPlayer() {
+		/* The player is a simple sphere that moves up and down using W and S respectively
+		 * It also uses colliders to tell when it has hit a pipe in order to end the game
+		 */
 		BranchGroup player = new BranchGroup();
-		BoundingSphere bounds = new BoundingSphere();
+		BoundingSphere bounds = new BoundingSphere();	//Creating the bounds for the player object first
 
 		Appearance ap = new Appearance();
-		ap.setMaterial(new Material());
+		ap.setMaterial(new Material());		//Creating a material again
 
+		/* Creating a sphere to be the player
+		 * Need to allow the sphere to collide with the pipes
+		 * Then bounds need to AutoCompute for the colliders
+		 */
 		playerShape = new Sphere(1.0f);
 		playerShape.setAppearance(ap);
 		playerShape.setCollidable(true);
 		playerShape.setBoundsAutoCompute(true);
 
+		//Applying initial scaling and transforms to the sphere
 		Transform3D tr = new Transform3D();
 		tr.setScale(0.08);
 		tr.setTranslation(new Vector3d(-0.5,0, 0));
@@ -312,25 +328,26 @@ public class Driver extends Applet {
 		tg1.setTransform(tr);
 		player.addChild(tg1);
 
+		//Necessary to allow the sphere to move up and down when player presses W and S
 		tg1.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		tg1.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		
-		//light
+		//Create a light for the sphere
 		PointLight light = new PointLight(new Color3f(Color.black), new Point3f(1f,1f,1f), new Point3f(1f,0.1f,0f));
-
 		light.setInfluencingBounds(bounds);
 		player.addChild(light);
 
+		//Using the MovePlayer class to create a custom behavior to the sphere during runtime
 		Behavior b = new MovePlayer(tg1);
-		b.setSchedulingBounds(bounds);
+		b.setSchedulingBounds(bounds);		//Needs to have scheduling bounds
 		player.addChild(b);
-		
+
+		//Getting the Shape3D object from the sphere to create the collider
 		pSphere=playerShape.getShape();
 		pSphere.setBoundsAutoCompute(true);
 		pSphere.setCollisionBounds(new BoundingSphere(new Point3d(0, 0, 0), 0.5));
 		pSphere.setPickable(true);
 		pSphere.setCollidable(true);
-		
 
 		return player;
 	}
@@ -368,6 +385,7 @@ public class Driver extends Applet {
 
 
 	public static void main(String[] args) {
+		//Initialize the program
 		System.setProperty("sun.awt.noerasebackground", "true");
 		new MainFrame( new Driver(), 640, 480);
 	}
